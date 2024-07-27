@@ -4,8 +4,9 @@ import { host, pesan, api, isJson } from './Module';
 import "./App.css";
 
 import Home from "./page/Home";
-import Piutang from "./page/Piutang";
-import Pesanan from "./page/Pesanan";
+import Absen from "./page/Absen";
+import Scan from "./page/Scan";
+import Info from "./page/Info";
 import Profile from "./page/Profile";
 
 function App() {
@@ -21,11 +22,11 @@ function App() {
 
     async componentDidMount() {
       let Path = window.location.pathname;
-      let sql = await api("data", { act: "data profile" });
-      if (sql.status == "sukses") {
-        this.setState({ Profile: sql.profile, Path: Path });
-        document.title = sql.profile.Nama
-      }
+      // let sql = await api("data", { act: "data profile" });
+      // if (sql.status == "sukses") {
+      //   this.setState({ Profile: sql.profile, Path: Path });
+      //   document.title = sql.profile.Nama
+      // }
     }
 
     render() {
@@ -35,9 +36,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Home page="Home" />} />
               <Route path="/home" element={<Home page="Home" />} />
-              <Route path="/piutang" element={<Piutang page="piutang" />} />
-              <Route path="/pesanan" element={<Pesanan page="pesanan" />} />
-              <Route path="/profile" element={<Profile page="Home" />} />
+              <Route path="/absen" element={<Absen page="Absen" />} />
+              <Route path="/scan" element={<Scan page="Scan" />} />
+              <Route path="/info" element={<Info page="Info" />} />
+              <Route path="/profile" element={<Profile page="Profile" />} />
             </Routes>
           </div>
 
@@ -47,13 +49,17 @@ function App() {
                 <i className="fas fa-home"></i>
                 <div className="menu-label">Home</div>
               </Link>
-              <Link to="/piutang" className={`menu-item ${this.state.Path == "/piutang" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/piutang" })}>
-                <i className="fas fa-list-alt"></i>
-                <div className="menu-label">Piutang</div>
+              <Link to="/absen" className={`menu-item ${this.state.Path == "/absen" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/absen" })}>
+                <i className="fas fa-fingerprint"></i>
+                <div className="menu-label">Absen</div>
               </Link>
-              <Link to="/pesanan" className={`menu-item ${this.state.Path == "/pesanan" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/pesanan" })}>
-                <i className="fas fa-shopping-cart"></i>
-                <div className="menu-label">Pembelian</div>
+              <Link to="/scan" className={`menu-item ${this.state.Path == "/scan" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/scan" })}>
+                <i className="fas fa-qrcode"></i>
+                <div className="menu-label">Scan</div>
+              </Link>
+              <Link to="/info" className={`menu-item ${this.state.Path == "/info" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/info" })}>
+                <i className="fas fa-bell"></i>
+                <div className="menu-label">Info</div>
               </Link>
               <Link to="/profile" className={`menu-item ${this.state.Path == "/profile" ? "active-menu" : ""}`} onClick={() => this.setState({ Path: "/profile" })}>
                 <i className="fas fa-user"></i>
@@ -185,127 +191,25 @@ function App() {
       return (
         <Fragment>
           <div className="container d-flex align-items-center justify-content-center">
-            <div className="card">
-              <div className="card-header pt-4">
-                <img src="bpLogo.png" alt="Logo" style={{ width: '100%', height: 'auto' }} />
-                <ul className="nav nav-pills card-header-pills mt-4">
-                  <li className="nav-item" style={{ cursor: "pointer" }}>
-                    <a
-                      className={`nav-link ${this.state.Mode === 'Login' ? 'active' : ''}`}
-                      onClick={() => this.setState({ Mode: 'Login' })}
-                    >
-                      Sign in
-                    </a>
-                  </li>
-                  <li className="nav-item" style={{ cursor: "pointer" }}>
-                    <a
-                      className={`nav-link ${this.state.Mode === 'Signup' ? 'active' : ''}`}
-                      onClick={() => this.setState({ Mode: 'Signup' })}
-                    >
-                      Sign up
-                    </a>
-                  </li>
-                </ul>
+            <div className="card" style={{ width: "400px" }}>
+              <div className="card-header pt-4 d-flex justify-content-between align-items-center">
+                <img src={require('./logo.png')} alt="Logo" style={{ width: '75px', height: '75px', borderRadius: "50%" }} />
+                <h4>MA DARUL ULUM WARU</h4>
               </div>
               <div className="card-body">
-                {this.state.Mode === 'Login' ? (
-                  <form className="needs-validation" onSubmit={this.handleLogin} noValidate>
-                    <div className="mb-3">
-                      <label htmlFor="Email" className="form-label">Username</label>
-                      <input type="text" className="form-control" name="Email" value={this.state.UserName} onChange={(e) => this.setState({ UserName: e.target.value })} required />
-                      <div className="invalid-feedback">Silahkan isi Username</div>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="Password" className="form-label">Password</label>
-                      <input type="password" className="form-control" name="Password" value={this.state.Password} onChange={(e) => this.setState({ Password: e.target.value })} required />
-                      <div className="invalid-feedback">Silahkan isi Password</div>
-                    </div>
-                    <button type="submit"  style={{ backgroundColor:"#7498ba" }} className="btn btn-primary w-100">Sign in</button>
-                  </form>
-                ) : (
-                  <form className="needs-validation signup-form" onSubmit={this.handleDaftar} noValidate>
-                    <div className="mb-3">
-                      <label htmlFor="Nama" className="form-label">Nama Lengkap</label>
-                      <input type="text" className="form-control" name="Nama" value={this.state.Nama} onChange={(e) => this.setState({ Nama: e.target.value })} required />
-                      <div className="invalid-feedback">Silahkan isi Nama</div>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="Email" className="form-label">Email</label>
-                      <input type="email" className="form-control" name="Email" value={this.state.Email} onChange={(e) => this.setState({ Email: e.target.value })} required />
-                      <div className="invalid-feedback">Silahkan isi Email</div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="Telp" className="form-label">Telp</label>
-                        <input type="tel" className="form-control" name="Telp" value={this.state.Telp} onChange={(e) => this.setState({ Telp: e.target.value })} required />
-                        <div className="invalid-feedback">Silahkan isi Telp</div>
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="ProvinsiID" className="form-label">Provinsi</label>
-                        <select className="form-select" name="ProvinsiID" value={this.state.ProvinsiID} onChange={(e) => this.handleGetAlamat('kota', e.target.value)} required>
-                          <option value="">Silahkan pilih provinsi</option>
-                          {this.state.DataProvinsi.map((opt, i) => (
-                            <option key={i} value={opt.ID}>{opt.Nama}</option>
-                          ))}
-                        </select>
-                        <div className="invalid-feedback">Silahkan Pilih Provinsi</div>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="KotaID" className="form-label">Kota</label>
-                        <select className="form-select" name="KotaID" value={this.state.KotaID} onChange={(e) => this.handleGetAlamat('kecamatan', e.target.value)} required>
-                          {this.state.DataKota.map((opt, i) => (
-                            <option key={i} value={opt.ID}>{opt.Nama}</option>
-                          ))}
-                        </select>
-                        <div className="invalid-feedback">Silahkan Pilih Kota</div>
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label htmlFor="KecamatanID" className="form-label">Kecamatan</label>
-                        <select
-                          className="form-select"
-                          name="KecamatanID"
-                          value={this.state.KecamatanID}
-                          onChange={(e) => this.setState({ KecamatanID: e.target.value })}
-                          required
-                        >
-                          {this.state.DataKec.map((opt, i) => (
-                            <option key={i} value={opt.ID}>{opt.Nama}</option>
-                          ))}
-                        </select>
-                        <div className="invalid-feedback">Silahkan Pilih Kecamatan</div>
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="Password" className="form-label">Password</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        name="Password"
-                        value={this.state.Pwd}
-                        onChange={(e) => this.setState({ Pwd: e.target.value })}
-                        placeholder="Masukan Password"
-                        required
-                      />
-                      <div className="invalid-feedback">Silahkan isi Password</div>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="RePassword" className="form-label">Confirm password</label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        name="RePassword"
-                        value={this.state.RePwd}
-                        onChange={(e) => this.setState({ RePwd: e.target.value })}
-                        placeholder="Masukan Kembali Password"
-                        required
-                      />
-                      <div className="invalid-feedback">Silahkan isi Password Kembali</div>
-                    </div>
-                    <button type="submit" style={{ backgroundColor:"#7498ba" }} className="btn btn-primary w-100">Sign up</button>
-                  </form>
-                )}
+                <form className="needs-validation" onSubmit={this.handleLogin} noValidate>
+                  <div className="mb-6">
+                    <label htmlFor="Email" className="form-label">NIS</label>
+                    <input type="text" className="form-control" name="NIS" value={this.state.UserName} onChange={(e) => this.setState({ UserName: e.target.value })} placeholder="Masukan Nomor Induk Siswa" required />
+                    <div className="invalid-feedback">Silahkan isi NIS</div>
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="Password" className="form-label">Password</label>
+                    <input type="password" className="form-control" name="Password" value={this.state.Password} onChange={(e) => this.setState({ Password: e.target.value })} placeholder="Masukan Kata Sandi" required />
+                    <div className="invalid-feedback">Silahkan isi Password</div>
+                  </div>
+                  <button type="submit" style={{ backgroundColor: "#32642d", color: "#fbbc05" }} className="btn btn-primary w-100">Masuk</button>
+                </form>
               </div>
             </div>
           </div>
@@ -314,12 +218,13 @@ function App() {
       )
     }
   }
+  return <Main />
 
-  if (Token) {
-    return <Main />
-  } else {
-    return <Login />
-  }
+  // if (Token) {
+  //   return <Main />
+  // } else {
+  //   return <Login />
+  // }
 }
 
 export default App;

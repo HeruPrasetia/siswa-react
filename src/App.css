@@ -1,7 +1,44 @@
+:root {
+    --color-primary: #32642d;
+    --color-primary-hover: #68ADF8;
+    --color-primary-transparent: hsla(212, 91%, 31%, 0.2);
+
+    --color-secondary: #fbbc05;
+    --color-secondary-hover: #fbbc05;
+    --color-secondary-transparent: hsla(212, 91%, 31%, 0.2);
+    --color-red: #B0182E;
+}
+
 body {
     height: 100vh;
     width: 100vw;
-    background-color: #f8f9fa; /* Light grey background */
+    background-color: #f8f9fa;
+    /* Light grey background */
+}
+
+.btn-default {
+    background-color: #32642d;
+    color: #fbbc05;
+}
+
+.btn-default:hover {
+    background-color: #fbbc05;
+    color: #32642d;
+}
+
+.form-control:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px var(--color-primary) !important;
+}
+
+.form-control:hover {
+    border-color: var(--color-primary) !important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px var(--color-primary) !important;
+}
+
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+    border-color: var(--color-red) !important;
 }
 
 .container {
@@ -15,8 +52,9 @@ body {
 }
 
 .card-header {
-    background-color: #cbd6df; /* Blue-grey color */
-    color: black;
+    background-color: #32642d;
+    /* Blue-grey color */
+    color: #fbbc05;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
 }
@@ -26,7 +64,8 @@ body {
 }
 
 .card-header .nav-link.active {
-    background-color: #7498ba; /* Darker blue-grey */
+    background-color: #7498ba;
+    /* Darker blue-grey */
     border-radius: 5px;
 }
 
@@ -75,7 +114,7 @@ textarea.form-control {
 /* NAVBAR BOTTOM */
 
 .menu-container {
-    background-color: #004578;
+    background-color: var(--color-primary);
     padding: 10px;
     border-top: 2px solid #002745;
     position: fixed;
@@ -100,11 +139,11 @@ textarea.form-control {
 }
 
 .menu-item:hover {
-    background-color: #002745;
+    color: var(--color-secondary);
 }
 
 .menu-item.active-menu {
-    background-color: #002745;
+    color: var(--color-secondary);
     border-radius: 10px;
 }
 
@@ -130,7 +169,8 @@ textarea.form-control {
     border-radius: 5px;
     opacity: 0;
     z-index: 1000;
-    transition: opacity 0.3s ease-in-out; /* Transisi opacity selama 0.3 detik */
+    transition: opacity 0.3s ease-in-out;
+    /* Transisi opacity selama 0.3 detik */
 }
 
 #toast.toast-active {

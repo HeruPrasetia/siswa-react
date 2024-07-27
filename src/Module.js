@@ -1,7 +1,6 @@
 import * as XLSX from 'xlsx';
 
-export let host = "https://api.gijutsusoftware.com/customer/";
-// export let host = window.location.hostname === "localhost" ? "http://localhost/apis/customer/" : "https://api.gijutsusoftware.com/customer/";
+export let host = window.location.hostname === "localhost" ? "http://localhost/siswaapi/" : "https://siswaapi.naylatools.com/";
 
 export const Token = localStorage.getItem("TokenUser");
 

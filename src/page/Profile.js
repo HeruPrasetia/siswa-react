@@ -30,12 +30,6 @@ class Home extends React.Component {
                         </div>
                         <p className="mb-1">Menu untuk ganti kata sandi</p>
                     </a>
-                    <a href="#" className="list-group-item list-group-item-action">
-                        <div className="d-flex w-100 justify-content-between">
-                            <h5 className="mb-1">Kode Member</h5>
-                        </div>
-                        <p className="mb-1">Lihat Kode Member</p>
-                    </a>
                     <a href="#" className="list-group-item list-group-item-action" onClick={(e) => this.handleLogout()}>
                         <div className="d-flex w-100 justify-content-between">
                             <h5 className="mb-1">Keluar</h5>
