@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 
-export let host = window.location.hostname === "localhost" ? "http://localhost/siswaapi/" : "https://siswaapi.naylatools.com/";
+export let host = window.location.hostname === "localhost" ? "http://localhost/apis/siamik/" : "https://apis.naylatools.com/siamik/";
 
 export const Token = localStorage.getItem("TokenUser");
 
@@ -173,6 +173,7 @@ export function submitForm(e, opt) {
     let btnClose = opt.close ? document.getElementById(opt.close) : Form.querySelector('button[data-bs-dismiss="modal"]');
     if (Form.checkValidity()) {
         let data = new FormData(Form);
+        data.append("Domain", window.location.hostname);
         data.append("Token", Token);
         fetch(host + opt.crud, {
             method: 'POST',
@@ -238,9 +239,11 @@ export const api = function (url, data, debug = false) {
 function jsonToForm(data) {
     const formData = new FormData();
     for (let dt in data) formData.append(dt, data[dt]);
+    formData.append("Domain", window.location.hostname);
     formData.append("Token", Token);
     return formData;
 }
+
 export function convertToBase64(url) {
     return new Promise((resolve, reject) => {
         const img = new Image();

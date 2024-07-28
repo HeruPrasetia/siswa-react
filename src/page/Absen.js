@@ -1,12 +1,11 @@
 import React, { Fragment } from 'react';
 import Webcam from 'react-webcam';
-import { pesan, submitForm, api, tanggalIndo, numberFormat, openModal } from '../Module';
+import { host, pesan, submitForm, api, tanggalIndo, numberFormat, openModal } from '../Module';
 
 class Absen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            DataJadwal: [],
             JamNow: "",
             Mode: "Masuk",
             host: window.location.hostname === "localhost" ? "http://localhost/siswaapi" : "https://siswaapi.naylatools.com",
@@ -14,7 +13,9 @@ class Absen extends React.Component {
             isCameraActive: false,
             latitude: "",
             longitude: "",
-            DataAbsen: []
+            DataAbsen: [],
+            Absen: {},
+            host: host.replaceAll("siamik/", "")
         };
         this.updateClock = this.updateClock.bind(this);
         this.handleMasuk = this.handleMasuk.bind(this);
@@ -26,10 +27,14 @@ class Absen extends React.Component {
 
     componentDidMount() {
         setInterval(this.updateClock, 1000);
-
-        // Add event listener to detect modal close
         const modal = document.getElementById('modalAbsen');
         modal.addEventListener('hidden.bs.modal', this.handleModalClose);
+        this.handleMain();
+    }
+
+    async handleMain() {
+        let sql = await api("datasiswa", { act: "data absen" }, true);
+        if (sql.status == "sukses") this.setState({ DataAbsen: sql.absen, Absen: sql.sekarang });
     }
 
     updateClock() {
@@ -42,12 +47,12 @@ class Absen extends React.Component {
     }
 
     handleMasuk() {
-        this.setState({ Mode: "Masuk", isCameraActive: true });
+        this.setState({ Mode: "Masuk", isCameraActive: true, foto: null });
         openModal("modalAbsen");
     }
 
     handlePulang() {
-        this.setState({ Mode: "Pulang", isCameraActive: true });
+        this.setState({ Mode: "Pulang", isCameraActive: true, foto: null });
         openModal("modalAbsen");
     }
 
@@ -93,22 +98,34 @@ class Absen extends React.Component {
             <Fragment>
                 <div className='container'>
                     <h5 style={{ textAlign: "center" }}>Absensi</h5>
-                    <div className='card shadow mb-2' style={{ height: "200px" }} onClick={this.handleMasuk}>
-                        <div className='card-body d-flex justify-content-between align-items-start'>
-                            <div className='d-flex gap-2'>
-                                <i className='fas fa-sign-in-alt' style={{ fontSize: "40px" }}></i>
-                                <h1>Masuk</h1>
+                    <div className='card shadow mb-2' style={{ height: "220px" }} onClick={this.handleMasuk}>
+                        <div className='card-body'>
+                            <div className='d-flex justify-content-between align-items-start'>
+                                <div className='d-flex gap-2'>
+                                    <i className='fas fa-sign-in-alt' style={{ fontSize: "40px" }}></i>
+                                    <h1>Masuk</h1>
+                                </div>
+                                <h1>{this.state.Absen.JamMasuk != null ? this.state.Absen.JamMasuk : this.state.JamNow}</h1>
                             </div>
-                            <h1>{this.state.JamNow}</h1>
+                            <div className='d-flex'>
+                                {this.state.Absen.FotoMasuk != null && <img src={this.state.host + this.state.Absen.FotoMasuk} className='w-50' style={{ width: "100%" }} />}
+                                {this.state.Absen.LokasiMasuk != null && <iframe src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB_795sI-eYMaKoMy4Dvkrxtxz3qYXWb6A&q=${this.state.Absen.LokasiMasuk}`} className='w-50' width="100%" height="100%" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>}
+                            </div>
                         </div>
                     </div>
-                    <div className='card shadow' style={{ height: "200px" }} onClick={this.handlePulang}>
-                        <div className='card-body d-flex justify-content-between align-items-start'>
-                            <div className='d-flex gap-2'>
-                                <i className='fas fa-sign-out-alt' style={{ fontSize: "40px" }}></i>
-                                <h1>Pulang</h1>
+                    <div className='card shadow' style={{ height: "220px" }} onClick={this.handlePulang}>
+                        <div className='card-body'>
+                            <div className='d-flex justify-content-between align-items-start'>
+                                <div className='d-flex gap-2'>
+                                    <i className='fas fa-sign-out-alt' style={{ fontSize: "40px" }}></i>
+                                    <h1>Pulang</h1>
+                                </div>
+                                <h1>{this.state.Absen.JamPulang != null ? this.state.Absen.JamPulang : this.state.JamNow}</h1>
                             </div>
-                            <h1>{this.state.JamNow}</h1>
+                            <div className='d-flex'>
+                                {this.state.Absen.FotoPulang != null && <img src={this.state.host + this.state.Absen.FotoPulang} className='w-50' style={{ width: "100%" }} />}
+                                {this.state.Absen.LokasiPulang != null && <iframe src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB_795sI-eYMaKoMy4Dvkrxtxz3qYXWb6A&q=${this.state.Absen.LokasiPulang}`} className='w-50' width="100%" height="100%" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>}
+                            </div>
                         </div>
                     </div>
 
@@ -146,7 +163,7 @@ class Absen extends React.Component {
                 <div className="modal fade" id="modalAbsen" tabIndex="-1" aria-labelledby="modalAbsen" aria-hidden="true">
                     <div className="modal-dialog modal-lg">
                         <div className="modal-content">
-                            <form onSubmit={(e) => submitForm(e, { crud: "absen" })} noValidate>
+                            <form onSubmit={(e) => submitForm(e, { crud: "datasiswa", debug: true, fn: () => this.handleMain() })} noValidate>
                                 <div className="modal-header">
                                     <h1 className="modal-title fs-5">Absen {this.state.Mode}</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -164,18 +181,21 @@ class Absen extends React.Component {
                                         />
                                     )}
                                     {this.state.foto && <img src={this.state.foto} alt="foto hasil" />}
+                                    {this.state.longitude && <span style={{ textAlign: "center" }}>{`${this.state.latitude},${this.state.longitude}`}</span>}
                                     <button type='button' className='btn w-100' style={{ textAlign: "center" }} onClick={this.switchCamera}>Ganti Kamera</button>
                                     <p></p>
+                                    <input type='hidden' name="act" value="proses absen" />
+                                    <input type='hidden' name="Absen" value={this.state.Mode} />
                                     <input type='hidden' name="Foto" value={this.state.foto} />
-                                    <input type='hidden' name="Lokasi" value={`${this.state.latitude},${this.state.latitude}`} />
-                                    <div className='d-flex justify-content-between align-items-center gap-2'>
+                                    <input type='hidden' name="Lokasi" value={`${this.state.latitude},${this.state.longitude}`} />
+                                    <div className='d-flex justify-ontent-between align-items-center gap-2'>
                                         <button type='button' className='btn btn-default w-50' onClick={this.capture}>Ambil Foto</button>
                                         <button type='button' className='btn btn-default w-50' onClick={() => this.getLocation()}>Ambil Lokasi</button>
                                     </div>
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                                    <button type="submit" className="btn btn-default">Absen</button>
+                                    <button type="submit" className="btn btn-default"><i className='fas fa-save'></i>Absen</button>
                                 </div>
                             </form>
                         </div>

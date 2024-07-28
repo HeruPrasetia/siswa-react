@@ -1,13 +1,21 @@
 import React, { Fragment } from 'react';
 import { pesan, submitForm, api, tanggalIndo, numberFormat, openModal } from '../Module';
+import { DataMaskValues } from '@zxing/library/esm/core/qrcode/decoder/DataMask';
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            DataJadwal: [],
+            DataPelajaran: [],
+            DataEks: [],
             host: window.location.hostname === "localhost" ? "http://localhost/siswaapi" : "https://siswaapi.naylatools.com"
         };
+    }
+
+    async componentDidMount() {
+        let sql = await api("datasiswa", { act: "data jadwal" });
+        console.log(sql);
+        if (sql.status == "sukses") this.setState({ DataPelajaran: sql.pelajaran, DataEks: sql.eks });
     }
 
     render() {
@@ -26,14 +34,14 @@ class Home extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.DataJadwal.length > 0 ?
-                                    this.state.DataJadwal.map((tr, i) => {
+                                {this.state.DataPelajaran.length > 0 ?
+                                    this.state.DataPelajaran.map((tr, i) => {
                                         return (
                                             <tr>
-                                                <td>{tr.Mulai}</td>
-                                                <td>{tr.Mapel}</td>
-                                                <td>{tr.Guru}</td>
-                                                <td>{tr.Selesai}</td>
+                                                <td>{tr.JamMulai}</td>
+                                                <td>{tr.NamaPelajaran}</td>
+                                                <td>{tr.NamaPengawas}</td>
+                                                <td>{tr.JamSelesai}</td>
                                             </tr>
                                         )
                                     })
@@ -50,20 +58,21 @@ class Home extends React.Component {
                         <table className='table table-striped'>
                             <thead>
                                 <tr>
+                                    <th>Mulai</th>
                                     <th>Ekstrakurikuler</th>
-                                    <th>Jam</th>
                                     <th>Guru</th>
+                                    <th>Selesai</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.DataJadwal.length > 0 ?
-                                    this.state.DataJadwal.map((tr, i) => {
+                                {this.state.DataEks.length > 0 ?
+                                    this.state.DataEks.map((tr, i) => {
                                         return (
                                             <tr>
-                                                <td>{tr.Mulai}</td>
-                                                <td>{tr.Mapel}</td>
-                                                <td>{tr.Guru}</td>
-                                                <td>{tr.Selesai}</td>
+                                                <td>{tr.JamMulai}</td>
+                                                <td>{tr.NamaPelajaran}</td>
+                                                <td>{tr.NamaPengawas}</td>
+                                                <td>{tr.JamSelesai}</td>
                                             </tr>
                                         )
                                     })

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { BrowserMultiFormatReader, NotFoundException } from '@zxing/library';
+import { pesan, api } from '../Module';
 
 class Home extends React.Component {
     constructor(props) {
@@ -33,7 +34,13 @@ class Home extends React.Component {
 
     async handleScan(data) {
         this.setState({ scanResult: data });
-        console.log(data);
+        let sql = await api("scan", { act: "join pelajaran", ID: data }, true);
+        if (sql.status == "sukses") {
+            pesan(sql.pesan);
+            document.getElementById('menuHome').click();
+        } else {
+            pesan(sql.pesan);
+        }
     }
 
     toggleCamera() {
